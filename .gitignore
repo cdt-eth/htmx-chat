@@ -1,0 +1,28 @@
+# Binaries and objects
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go specific
+/vendor/
+/bin/
+/tmp/
+
+# Environment files
+.env
+.env.local
+
+# Air files
+/tmp
+.air.toml
+
+# IDE specific
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store 
