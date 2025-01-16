@@ -2,7 +2,7 @@
 
 A simple real-time chat application built with Go and HTMX.
 
-![Chat App Screenshot](https://miro.medium.com/v2/resize:fit:1024/1*mr6lwBOE6xkRGOb0KTABaQ.png)
+<img src="https://miro.medium.com/v2/resize:fit:1024/1*mr6lwBOE6xkRGOb0KTABaQ.png" width="400" alt="Chat App Screenshot">
 
 ## Features
 
