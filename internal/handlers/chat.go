@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -14,8 +13,19 @@ func GetMessages(w http.ResponseWriter, r *http.Request) {
 	// Return HTML instead of JSON
 	w.Header().Set("Content-Type", "text/html")
 	for _, msg := range messages {
-		fmt.Fprintf(w, "<div class='message'>%s: %s</div>", 
-			msg.Sender, msg.Content)
+		fmt.Fprintf(w, `
+			<div class="message" id="msg-%d">
+				<span>%s: %s</span>
+				<button 
+					class="delete-btn"
+					hx-delete="/chat/delete"
+					hx-vals='{"id": %d}'
+					hx-target="#msg-%d"
+					hx-swap="outerHTML">
+					×
+				</button>
+			</div>`, 
+			msg.ID, msg.Sender, msg.Content, msg.ID, msg.ID)
 	}
 }
 
@@ -40,33 +50,42 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 
 	// Return HTML for the new message
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprintf(w, "<div class='message'>%s: %s</div>", 
-		newMsg.Sender, newMsg.Content)
+	fmt.Fprintf(w, `
+		<div class="message" id="msg-%d">
+			<span>%s: %s</span>
+			<button 
+				class="delete-btn"
+				hx-delete="/chat/delete"
+				hx-vals='{"id": %d}'
+				hx-target="#msg-%d"
+				hx-swap="outerHTML">
+				×
+			</button>
+		</div>`, 
+		newMsg.ID, newMsg.Sender, newMsg.Content, newMsg.ID, newMsg.ID)
 }
 
 func DeleteMessage(w http.ResponseWriter, r *http.Request) {
-	// Check method
 	if r.Method != http.MethodDelete {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Parse ID from request
-	var msg struct {
-		ID int `json:"id"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&msg); err != nil {
+	// Parse form data
+	if err := r.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	// Get ID from form values
+	var id int
+	fmt.Sscanf(r.FormValue("id"), "%d", &id)
+
 	// Delete message
-	if err := models.DeleteMessage(msg.ID); err != nil {
+	if err := models.DeleteMessage(id); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Return 204 No Content
 	w.WriteHeader(http.StatusNoContent)
 }
