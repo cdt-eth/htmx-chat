@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chat App</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+      .chat-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .messages {
+        border: 1px solid #ddd;
+        padding: 20px;
+        height: 400px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+      }
+      .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="user-info">
+        <input
+          type="text"
+          id="username"
+          placeholder="Your name"
+          value="Anonymous"
+          onchange="updateSender(this.value)"
+        />
+      </div>
+
+      <div class="messages" hx-get="/chat/messages" hx-trigger="load, every 2s">
+        <!-- Messages will be loaded here -->
+      </div>
+
+      <form hx-post="/chat/send" hx-target=".messages" hx-swap="beforeend">
+        <input
+          type="text"
+          name="content"
+          placeholder="Type a message..."
+          required
+        />
+        <input type="hidden" name="sender" id="sender" value="Anonymous" />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+
+    <script>
+      function updateSender(name) {
+        document.getElementById("sender").value = name || "Anonymous";
+      }
+    </script>
+  </body>
+</html>

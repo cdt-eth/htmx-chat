@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/cdt-eth/htmx-chat/internal/models"
@@ -9,7 +10,13 @@ import (
 
 func GetMessages(w http.ResponseWriter, r *http.Request) {
 	messages := models.GetMessages()
-	json.NewEncoder(w).Encode(messages)
+	
+	// Return HTML instead of JSON
+	w.Header().Set("Content-Type", "text/html")
+	for _, msg := range messages {
+		fmt.Fprintf(w, "<div class='message'>%s: %s</div>", 
+			msg.Sender, msg.Content)
+	}
 }
 
 func SendMessage(w http.ResponseWriter, r *http.Request) {
@@ -18,18 +25,23 @@ func SendMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var msg struct {
-		Content string `json:"content"`
-		Sender  string `json:"sender"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&msg); err != nil {
+	// Parse form data instead of JSON
+	if err := r.ParseForm(); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	newMsg := models.AddMessage(msg.Content, msg.Sender)
-	json.NewEncoder(w).Encode(newMsg)
+	// Get values from form
+	content := r.FormValue("content")
+	sender := r.FormValue("sender")
+
+	// Add message
+	newMsg := models.AddMessage(content, sender)
+
+	// Return HTML for the new message
+	w.Header().Set("Content-Type", "text/html")
+	fmt.Fprintf(w, "<div class='message'>%s: %s</div>", 
+		newMsg.Sender, newMsg.Content)
 }
 
 func DeleteMessage(w http.ResponseWriter, r *http.Request) {

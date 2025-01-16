@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"text/template"
 
 	"github.com/cdt-eth/htmx-chat/internal/handlers"
 	"github.com/joho/godotenv"
@@ -30,7 +30,8 @@ func main() {
     
 	// Home route
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "Server is running!")
+        tmpl := template.Must(template.ParseFiles("templates/index.html"))
+        tmpl.Execute(w, nil)
     })
 
     // Start server
