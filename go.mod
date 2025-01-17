@@ -1,6 +1,6 @@
 module github.com/cdt-eth/htmx-chat
 
-go 1.23.4
+go 1.21
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
