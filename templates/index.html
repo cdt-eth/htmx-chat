@@ -37,6 +37,62 @@
         color: #ff4444;
       }
     </style>
+    <script>
+      // Create WebSocket connection (like dialing into conference call)
+      const ws = new WebSocket("ws://localhost:8080/ws");
+
+      // When connection is established (like "You're connected!")
+      ws.onopen = () => {
+        console.log("Connected to chat server");
+      };
+
+      // When we receive a message (like hearing someone speak)
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        appendMessage(msg);
+      };
+
+      // When connection closes (like being disconnected)
+      ws.onclose = () => {
+        console.log("Disconnected from chat server");
+      };
+
+      function sendMessage(event) {
+        event.preventDefault();
+        const content = document.querySelector('input[name="content"]').value;
+        const sender = document.querySelector('input[name="sender"]').value;
+
+        // Send message through WebSocket (like speaking in conference call)
+        ws.send(JSON.stringify({ content, sender }));
+
+        // Clear input
+        document.querySelector('input[name="content"]').value = "";
+      }
+
+      function appendMessage(msg) {
+        const messagesDiv = document.querySelector(".messages");
+        const messageEl = document.createElement("div");
+        messageEl.className = "message";
+        messageEl.id = `msg-${msg.id}`;
+        messageEl.innerHTML = `
+                <span>${msg.sender}: ${msg.content}</span>
+                <button 
+                    class="delete-btn"
+                    onclick="deleteMessage(${msg.id})">×</button>
+            `;
+        messagesDiv.appendChild(messageEl);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      function deleteMessage(id) {
+        ws.send(
+          JSON.stringify({
+            type: "delete",
+            id: id,
+          })
+        );
+      }
+    </script>
   </head>
   <body>
     <div class="chat-container">
@@ -50,11 +106,11 @@
         />
       </div>
 
-      <div class="messages" hx-get="/chat/messages" hx-trigger="load, every 2s">
+      <div class="messages">
         <!-- Messages will be loaded here -->
       </div>
 
-      <form hx-post="/chat/send" hx-target=".messages" hx-swap="beforeend">
+      <form onsubmit="sendMessage(event)">
         <input
           type="text"
           name="content"
