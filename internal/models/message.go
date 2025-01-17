@@ -25,13 +25,13 @@ func AddMessage(content, sender string) Message {
 	defer mu.Unlock()
 
 	msg := Message{
-		ID:        nextID,  // Use nextID instead of array index
+		ID:        nextID,
 		Content:   content,
 		Sender:    sender,
 		Timestamp: time.Now(),
 	}
-	nextID++              // Increment for next message
 	messages = append(messages, msg)
+	nextID++
 	return msg
 }
 
