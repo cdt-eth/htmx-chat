@@ -49,7 +49,17 @@
       // When we receive a message (like hearing someone speak)
       ws.onmessage = (event) => {
         const msg = JSON.parse(event.data);
-        appendMessage(msg);
+
+        // If it's a delete message, remove the element
+        if (msg.content === "DELETED") {
+          const messageEl = document.getElementById(`msg-${msg.id}`);
+          if (messageEl) {
+            messageEl.remove();
+          }
+        } else {
+          // Otherwise append the new message
+          appendMessage(msg);
+        }
       };
 
       // When connection closes (like being disconnected)
