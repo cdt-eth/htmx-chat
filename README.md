@@ -1,21 +1,24 @@
-# Real-time Chat with Go and HTMX
+# Real-time Chat with Go, WebSocket, and HTMX
 
-A simple real-time chat application built with Go and HTMX.
+A real-time chat application built with Go, WebSocket for real-time messaging, and HTMX for dynamic UI interactions.
 
-<img src="https://miro.medium.com/v2/resize:fit:1024/1*mr6lwBOE6xkRGOb0KTABaQ.png" width="400" alt="Chat App Screenshot">
+<img src="https://miro.medium.com/v2/resize:fit:1024/1*mr6lwBOE6xkRGOb0KTABaQ.png" width="400" alt="go-htmx">
 
 ## Features
 
-- Real-time messaging using HTMX
+- Real-time messaging using WebSocket
+- Dynamic UI interactions with HTMX
+- User authentication with JWT
 - In-memory message storage
 - Message deletion
 - User identification
-- Auto-refresh every 2 seconds
 
 ## Tech Stack
 
 - Go for backend
-- HTMX for dynamic updates
+- WebSocket for real-time communication
+- HTMX for dynamic UI updates
+- JWT for authentication
 - Native CSS for styling
 - Air for live reload during development
 
@@ -27,18 +30,25 @@ htmx-chat/
 │   └── server/
 │       └── main.go          # Application entry point
 ├── internal/
+│   ├── auth/
+│   │   └── jwt.go          # JWT utilities
 │   ├── handlers/
-│   │   └── chat.go         # HTTP handlers for chat functionality
+│   │   ├── auth.go         # Authentication handlers
+│   │   └── chat.go         # WebSocket and chat handlers
+│   ├── middleware/
+│   │   └── auth.go         # Auth middleware
 │   └── models/
-│       └── message.go      # Message data structure and storage
+│       ├── message.go      # Message model
+│       └── user.go         # User model
 ├── templates/
-│   └── index.html          # Main chat interface
-├── .air.toml               # Air configuration for live reload
+│   ├── index.html          # Chat interface
+│   └── login.html          # Auth interface
+├── .air.toml               # Air configuration
 ├── .env                    # Environment variables
 ├── .env.example           # Example environment variables
-├── .gitignore             # Git ignore file
+├── .gitignore
 ├── go.mod                 # Go module definition
-└── README.md              # Project documentation
+└── README.md
 ```
 
 ## Running Locally
@@ -61,7 +71,16 @@ go mod tidy
 go install github.com/cosmtrek/air@latest
 ```
 
-4. Run with Air (live reload):
+4. Set up environment variables:
+
+```bash
+cp .env.example .env
+# Generate a JWT secret:
+openssl rand -base64 32
+# Add it to .env as JWT_SECRET
+```
+
+5. Run with Air (live reload):
 
 ```bash
 air
@@ -73,7 +92,7 @@ Or run directly with Go:
 go run cmd/server/main.go
 ```
 
-5. Visit `http://localhost:8080` in your browser
+6. Visit `http://localhost:8080` in your browser
 
 ## License
 
