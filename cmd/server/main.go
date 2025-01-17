@@ -20,16 +20,24 @@ func main() {
         port = "8080" 
     }
 
+    // Auth routes first (most specific)
+    http.HandleFunc("/auth/login", handlers.LoginHandler)
+
     // Chat routes
     http.HandleFunc("/chat/messages", handlers.GetMessages)
     http.HandleFunc("/chat/send", handlers.SendMessage)
     http.HandleFunc("/chat/delete", handlers.DeleteMessage)
     
-	// WebSocket endpoint (like creating a TV broadcast tower)
+    // WebSocket endpoint
     http.HandleFunc("/ws", handlers.HandleWebSocket)
 
-    // Regular HTTP endpoints (like regular mail delivery)
+    // Root route 
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        cookie, err := r.Cookie("token")
+        if err != nil || cookie.Value == "" {
+            http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+            return
+        }
         tmpl := template.Must(template.ParseFiles("templates/index.html"))
         tmpl.Execute(w, nil)
     })
