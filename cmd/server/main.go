@@ -8,6 +8,7 @@ import (
 
 	"github.com/cdt-eth/htmx-chat/internal/db"
 	"github.com/cdt-eth/htmx-chat/internal/handlers"
+	"github.com/cdt-eth/htmx-chat/internal/middleware"
 	"github.com/joho/godotenv"
 )
 
@@ -24,9 +25,12 @@ func main() {
         port = "8080" 
     }
 
+    limiter := middleware.NewRateLimiter()
+
     // Auth routes first (most specific)
-    http.HandleFunc("/auth/login", handlers.LoginHandler)
-    http.HandleFunc("/auth/signup", handlers.SignupHandler)
+    http.HandleFunc("/auth/login", limiter.Limit(handlers.LoginHandler))
+    http.HandleFunc("/auth/signup", limiter.Limit(handlers.SignupHandler))
+    http.HandleFunc("/auth/logout", handlers.LogoutHandler)
 
     // Chat routes
     http.HandleFunc("/chat/messages", handlers.GetMessages)

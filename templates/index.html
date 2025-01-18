@@ -36,6 +36,23 @@
       .delete-btn:hover {
         color: #ff4444;
       }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .logout-btn {
+        padding: 8px 16px;
+        background: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .logout-btn:hover {
+        background: #ff2222;
+      }
     </style>
     <script>
       // Create WebSocket connection (like dialing into conference call)
@@ -106,6 +123,16 @@
   </head>
   <body>
     <div class="chat-container">
+      <div class="header">
+        <h1>Chat Room</h1>
+        <button
+          hx-post="/auth/logout"
+          hx-confirm="Are you sure you want to logout?"
+          class="logout-btn"
+        >
+          Logout
+        </button>
+      </div>
       <div class="user-info">
         <input
           type="text"
