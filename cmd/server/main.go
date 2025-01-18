@@ -26,6 +26,7 @@ func main() {
 
     // Auth routes first (most specific)
     http.HandleFunc("/auth/login", handlers.LoginHandler)
+    http.HandleFunc("/auth/signup", handlers.SignupHandler)
 
     // Chat routes
     http.HandleFunc("/chat/messages", handlers.GetMessages)
