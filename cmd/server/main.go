@@ -6,6 +6,7 @@ import (
 	"os"
 	"text/template"
 
+	"github.com/cdt-eth/htmx-chat/internal/auth"
 	"github.com/cdt-eth/htmx-chat/internal/db"
 	"github.com/cdt-eth/htmx-chat/internal/handlers"
 	"github.com/cdt-eth/htmx-chat/internal/middleware"
@@ -47,8 +48,22 @@ func main() {
             http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
             return
         }
+
+        // Parse token to get username
+        claims, err := auth.ValidateToken(cookie.Value)
+        if err != nil {
+            http.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+            return
+        }
+
+        data := struct {
+            Username string
+        }{
+            Username: claims.Username,
+        }
+
         tmpl := template.Must(template.ParseFiles("templates/index.html"))
-        tmpl.Execute(w, nil)
+        tmpl.Execute(w, data)
     })
 
     log.Printf("Server starting on port %s", port)

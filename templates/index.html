@@ -53,6 +53,15 @@
       .logout-btn:hover {
         background: #ff2222;
       }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .username {
+        color: #666;
+        font-size: 0.9em;
+      }
     </style>
     <script>
       // Create WebSocket connection (like dialing into conference call)
@@ -124,7 +133,10 @@
   <body>
     <div class="chat-container">
       <div class="header">
-        <h1>Chat Room</h1>
+        <div class="header-left">
+          <h1>Chat Room</h1>
+          <span class="username">Welcome, {{.Username}}</span>
+        </div>
         <button
           hx-post="/auth/logout"
           hx-confirm="Are you sure you want to logout?"
