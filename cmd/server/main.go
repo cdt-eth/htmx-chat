@@ -6,13 +6,18 @@ import (
 	"os"
 	"text/template"
 
+	"github.com/cdt-eth/htmx-chat/internal/db"
 	"github.com/cdt-eth/htmx-chat/internal/handlers"
 	"github.com/joho/godotenv"
 )
 
 func main() {    
-    // Don't fail if .env missing
-    godotenv.Load() // Remove error check
+   
+    godotenv.Load()
+
+    if err := db.Init(); err != nil {
+        log.Fatal("Failed to initialize database:", err)
+    }
 
     port := os.Getenv("PORT")
     if port == "" {
