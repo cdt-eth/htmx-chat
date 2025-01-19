@@ -32,6 +32,8 @@ func main() {
     http.HandleFunc("/auth/login", limiter.Limit(handlers.LoginHandler))
     http.HandleFunc("/auth/signup", limiter.Limit(handlers.SignupHandler))
     http.HandleFunc("/auth/logout", handlers.LogoutHandler)
+    http.HandleFunc("/auth/signup-form", handlers.SignupFormHandler)
+    http.HandleFunc("/auth/login-form", handlers.LoginFormHandler)
 
     // Chat routes
     http.HandleFunc("/chat/messages", handlers.GetMessages)
