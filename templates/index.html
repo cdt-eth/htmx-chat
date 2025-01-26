@@ -110,12 +110,20 @@
         const messageEl = document.createElement("div");
         messageEl.className = "message";
         messageEl.id = `msg-${msg.id}`;
-        messageEl.innerHTML = `
-                <span>${msg.sender}: ${msg.content}</span>
-                <button 
-                    class="delete-btn"
-                    onclick="deleteMessage(${msg.id})">×</button>
-            `;
+
+        // Create text content safely
+        const messageText = document.createElement("span");
+        messageText.textContent = `${msg.sender}: ${msg.content}`;
+
+        // Create delete button safely
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.textContent = "X";
+        deleteBtn.addEventListener("click", () => deleteMessage(msg.id));
+
+        // Append elements
+        messageEl.appendChild(messageText);
+        messageEl.appendChild(deleteBtn);
         messagesDiv.appendChild(messageEl);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }
